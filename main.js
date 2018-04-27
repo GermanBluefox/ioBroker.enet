@@ -19,7 +19,7 @@ adapter.on("unload", function (callback)
 {
     try 
 	{
-		adapter.setState("gateway.connected", false, true);
+		adapter.setState("info.connection", false, true);
 		clearInterval(pollTimerStates);
 		pollTimerStates = null;				
         callback();
@@ -32,6 +32,7 @@ adapter.on("unload", function (callback)
 
 adapter.on("ready", function () 
 {
+	adapter.log.debug("START, Type: " + adapter.config.devicetype + "IP: " + adapter.config.ip + " USERNAME: " + adapter.config.username + " PASSWORD: " + adapter.config.password);
     init();
 });
 
@@ -84,12 +85,12 @@ function getGatewayStates()
 				if (err) 
 				{
 					adapter.log.error("getGatewayStates: Error on signing in channels for subscription: " + err);
-					adapter.setState("gateway.connected", false, true)
+					adapter.setState("info.connection", false, true)
 				}
 				if (res) 
 				{
 					adapter.log.debug.log("getGatewayStates: Sucess in singing in to channels: " + JSON.stringify(res));
-					adapter.setState("gateway.connected", true, true);
+					adapter.setState("info.connection", true, true);
 				}
 			});
 
@@ -196,7 +197,7 @@ function getGatewayDevices(ip)
 			else 
 			{
 				adapter.log.debug("getGatewayDevices: Connected to eNet Gateway for device setup: " + JSON.stringify(res));
-				adapter.setState("gateway.connected", true, true);
+				adapter.setState("info.connection", true, true);
 				setupDevices(gw, JSON.stringify(res));
 			}
 			gw.disconnect();
@@ -217,7 +218,7 @@ function setupDevices(gw, res)
 			adapter.log.error("setupDevices: Error getting eNet Gateway version: " + err);
 		else 
 		{
-			adapter.setState("gateway.connected", true, true);
+			adapter.setState("info.connection", true, true);
 			var ParsedJSON = JSON.parse(JSON.stringify(res));
 			if (ParsedJSON)
 			{
